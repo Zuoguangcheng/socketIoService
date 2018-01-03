@@ -36,6 +36,7 @@ io.on('connection', (socket) => {
   let userInfo = new UserInfo(time, time, socket);
   userInfo.init();
 });
+
 /**
  * Normalize a port into a number, string, or false.
  */

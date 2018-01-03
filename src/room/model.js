@@ -12,6 +12,10 @@ class RoomInfo {
   setPersons(user) {
     this.persons.push(user);
   }
+  leavePersons(user) {
+    const index = this.persons.indexOf(user);
+    this.persons.splice(index, 1);
+  }
 }
 
 module.exports = RoomInfo;
