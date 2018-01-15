@@ -1,6 +1,6 @@
 let info = require('./model');
 
-class RoomCollection {
+/*class RoomCollection {
   constructor() {
     this.rooms = [];
     for (let i = 0; i < 3; i++) {
@@ -11,6 +11,6 @@ class RoomCollection {
   getRooms() {
     return this.rooms;
   }
-}
+}*/
 
-module.exports = RoomCollection;
+module.exports = info;

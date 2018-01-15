@@ -1,19 +1,12 @@
 let rooms = require('../room');
 
-var MongoClient = require('mongodb').MongoClient;
-var url = 'mongodb://localhost:27017/socket';
-MongoClient.connect(url, function(err, db) {
-  if (err) throw err;
-  var dbase = db.db('socket');
-  var rooms = dbase.collection('rooms');
-});
-
 class UserInfo {
   constructor(id, name, socket) {
     this.name = name;
     this.id = id;
     this.socket = socket;
     this.room = '';
+    this.rooms = new rooms();
   }
 
   init() {
@@ -31,13 +24,13 @@ class UserInfo {
     });
   }
 
-  getRoomsList() {
-    this.socket.emit('rooms', new rooms().getRooms());
+  async getRoomsList() {
+    let rooms = await this.rooms.getRooms();
+    this.socket.emit('rooms', rooms);
   }
 
   leaveRooms() {
     this.socket.on('leaveRooms', id => {
-      console.log('leaveRooms', id);
     });
 
     // 清除之前加入过的房间
@@ -51,21 +44,17 @@ class UserInfo {
   }
 
   selectRooms() {
-    this.socket.on('selectRooms', id => {
-      console.log('selectRooms', id);
-      this.getChannelDetail();
+    this.socket.on('selectRooms', async id => {
+      let roomsDetail = await this.rooms.selectRoom(id);
+
     });
   }
 
   getChannelDetail() {
     this.socket.on('getChannel', id => {
-
-      this.socket.join(id, (e) => {
-        const roomsList = new rooms().getRooms();
-        let roomDetail = roomsList.filter(item => {
-          return item.id === id;
-        });
-        this.socket.emit('roomsDetail', roomDetail);
+      this.socket.join(id, async (e) => {
+        let roomsDetail = await this.rooms.selectRoom(id);
+        this.socket.emit('roomsDetail', roomsDetail);
       });
     });
   }
