@@ -15,5 +15,5 @@ var roomsSchema = new Schema({
   },
   maxNum: String,
 });
-// 将数据模型暴露出去
+// 将数据模型暴露出去  rooms为数据库集合的名字
 module.exports = mongoose.model('rooms', roomsSchema);

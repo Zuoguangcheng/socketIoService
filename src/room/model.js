@@ -8,13 +8,19 @@ class RoomInfo {
     this.maxNum = 100;
   }
 
-  setPersons(user) {
-    this.persons.push(user);
+  setPersons(id, user) {
+    Rooms.update({ _id: id }, {
+      $addToSet: { persons: user },
+    }, (err, data) => {
+      console.log('err', err);
+    });
   }
 
-  leavePersons(user) {
-    const index = this.persons.indexOf(user);
-    this.persons.splice(index, 1);
+  leavePersons(id, user) {
+    Rooms.update({ _id: id }, {
+      $pull: { persons: { name: user } },
+    }, (err, data) => {
+    });
   }
 
   getRooms() {
