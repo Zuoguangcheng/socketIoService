@@ -13,14 +13,13 @@ class UserInfo {
     this.getRoomsList();
     this.getChatMsg();
 
-    this.getChannelDetail();
+    this.getRoomDetail();
     this.leaveRooms();
     this.selectRooms();
   }
 
   getChatMsg() {
     this.socket.on('chatMsg', (id, record) => {
-
       console.log('id', id);
       console.log('record', record);
       this.socket.to(id).emit('chatMsg', record);
@@ -35,6 +34,10 @@ class UserInfo {
   leaveRooms() {
     this.socket.on('leaveRooms', async (id, name) => {
       await this.rooms.leavePersons(id, name);
+      this.getRoomsList();
+
+      let roomsDetail = await this.rooms.selectRoom(id);
+      this.socket.to(id).emit('roomsDetail', roomsDetail);
 
       // 清除之前加入过的房间
       let roomss = Object.keys(this.socket.rooms);
@@ -50,20 +53,21 @@ class UserInfo {
   selectRooms() {
     this.socket.on('selectRooms', async (id, name) => {
       await this.rooms.setPersons(id, { name });
+
       let roomsDetail = await this.rooms.selectRoom(id);
-    });
-  }
-
-  getChannelDetail() {
-    this.socket.on('getChannel', id => {
-
-      console.log('id----', id);
-      console.log('this.socket', this.socket);
+      this.socket.to(id).emit('roomsDetail', roomsDetail);
 
       this.socket.join(id, async (e) => {
         let roomsDetail = await this.rooms.selectRoom(id);
-        this.socket.emit('roomsDetail', roomsDetail);
       });
+
+    });
+  }
+
+  getRoomDetail() {
+    this.socket.on('getRoomDetail', async id => {
+      let roomsDetail = await this.rooms.selectRoom(id);
+      this.socket.emit('roomsDetail', roomsDetail);
     });
   }
 
