@@ -28,6 +28,7 @@ class UserInfo {
 
   async getRoomsList() {
     let rooms = await this.rooms.getRooms();
+    console.log('rooms', rooms);
     this.socket.emit('rooms', rooms);
   }
 
